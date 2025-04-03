@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173") // Allow frontend requests
+@CrossOrigin(origins = "https://sherehub.netlify.app") // Allow frontend requests
 public class App_Controller 
 {
 
