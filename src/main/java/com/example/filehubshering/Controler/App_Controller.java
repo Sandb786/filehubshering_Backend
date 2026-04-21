@@ -23,8 +23,10 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @RestController
-@CrossOrigin(origins = "https://sherehub.netlify.app") // Allow frontend requests
+@CrossOrigin(origins = "https://sharehub786.netlify.app") // Allow frontend requests
+// @CrossOrigin(origins = "http://localhost:5173")
 public class App_Controller 
 {
 
@@ -36,10 +38,19 @@ public class App_Controller
 
     String UPLOAD_DIR = Paths.get(System.getProperty("user.dir"), "uploads").toString();  
 
+@GetMapping("/")
+public ResponseEntity<?> getMethodName() 
+{
+
+    return ResponseEntity.status(200).body("Connected to backend!");
+}
+
+
     // ✅ Register Temporary User
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) 
     {
+
         
         if (user==null || user.getUsername().equals("")|| user.getUserid().equals("") || user.getPassword().equals(""))
         {
@@ -66,6 +77,7 @@ public class App_Controller
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) 
     {
+
         User existingUser = userRepository.findByUserid(user.getUserid());
 
         if (existingUser == null) 
@@ -91,7 +103,6 @@ public class App_Controller
             @RequestParam("password") String password) throws IOException 
     {
 
-
         if (file.isEmpty()) 
         {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty!");
@@ -107,7 +118,7 @@ public class App_Controller
          {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("File already exists!"); // 403
          }
-
+ 
         String filePath = UPLOAD_DIR+"\\"+userid+file.getOriginalFilename();
         File dest = new File(filePath);
         file.transferTo(dest);
@@ -115,6 +126,7 @@ public class App_Controller
         FileMetadata metadata = new FileMetadata();
         metadata.setFilename(file.getOriginalFilename());
         metadata.setUserId(userid);
+        metadata.setFileSize(file.getSize());
         metadata.setFilePath(filePath);
         metadata.setExpiryTime(LocalDateTime.now().plusMinutes(30)); // Auto-delete after
         fileRepository.save(metadata);
@@ -155,6 +167,11 @@ public class App_Controller
     @GetMapping("/getallfile")
     public ResponseEntity<?> getAllFile(@RequestParam("userid") String userid) throws IOException 
     {
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
         
          User user = userRepository.findByUserid(userid);
 
@@ -182,6 +199,7 @@ public class App_Controller
                                           @RequestParam("filename") String filename) throws IOException {
        
         
+                                        
         // Find user by ID
         User user = userRepository.findByUserid(userid);
 
@@ -269,5 +287,7 @@ public class App_Controller
 
         System.out.println("[Scheduler] Expired users and files deleted.");
     }
+
+
 
 }

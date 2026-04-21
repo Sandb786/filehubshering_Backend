@@ -14,6 +14,7 @@ public class FileMetadata
     private String filename;
     private String userId;
     private String filePath;
+    private long fileSize;
     private LocalDateTime expiryTime; // Auto-delete file after expiry
 
 }
